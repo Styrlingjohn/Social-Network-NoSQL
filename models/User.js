@@ -20,13 +20,22 @@ const userSchema = new Schema(
             validate: [validateEmail, 'Please fill a valid email address'],
             match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'] 
         },
-        thoughts: [thoughtSchema],
-        // friends: [userSchema], 
-    }
+          thoughts: {
+            type: Schema.Types.ObjectId,
+           // here just reference user 
+      ref: "thought"
+          },
+        },
+      {  
+        toJSON: {
+          virtuals: true,
+        },
+        id: false,
+      }
 );
 
 userSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
+    return this.friend.length;
   });
 
   const User = model('user', userSchema);
