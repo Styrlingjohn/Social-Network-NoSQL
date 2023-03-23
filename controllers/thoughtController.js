@@ -40,4 +40,44 @@ module.exports = {
             console.log(err);
             res.status(500).json(err)});
       },
+
+
+      updateThought(req, res) {
+        Thought.findOneAndUpdate(
+          { _id: req.params.thoughtId },
+          { $set: req.body },
+          { runValidators: true, new: true }
+        )
+          .then((thought) =>
+            !thought
+              ? res.status(404).json({ message: 'No thought with this id!' })
+              : res.json(thought)
+          )
+          .catch((err) => res.status(500).json(err));
+      },
+
+      
+      deleteThought(req, res) {
+        Thought.findOneAndRemove({ _id: req.params.thoughtId })
+          .then((thought) =>
+            !thought
+              ? res.status(404).json({ message: 'No such thought exists' })
+              : Thought.findOneAndUpdate(
+                { thoughts: req.params.thoughtId },
+                { $pull: { thoughts: req.params.thoughtId } },
+                { new: true }
+              )
+          )
+          .then((thought) =>
+            !thought
+              ? res.status(404).json({
+                message: 'thought deleted, but no thoughts found',
+              })
+              : res.json({ message: 'thought successfully deleted' })
+          )
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+          });
+      },
 };
