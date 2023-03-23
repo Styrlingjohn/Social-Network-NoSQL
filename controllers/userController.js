@@ -31,7 +31,7 @@ module.exports = {
         return res.status(500).json(err);
       });
   },
-  
+
   updateUser(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
